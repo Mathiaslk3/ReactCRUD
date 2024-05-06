@@ -58,6 +58,18 @@ export default function Users() {
       .then(response => response.json())
   }
 
+  const deleteUser = id => {
+    fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json())
+      .then(() => {
+        setUsers(values => {
+          return values.filter(item => item.id !== id)
+        })
+      })
+  }
+
   const onChangeHandler = (id, key, value) => {
     setUsers(values => {
       return values.map(item =>
@@ -99,7 +111,7 @@ export default function Users() {
               <td>
                 <button onClick={() => updateUser(user.id)}>Opdater</button>
                 &nbsp;
-                <button>Slet</button>
+                <button onClick={() => deleteUser(user.id)}>Slet</button>
               </td>
             </tr>
           ))}
