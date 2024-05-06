@@ -1,13 +1,47 @@
-import React, { useEffect, useState } from "react";
+import{ useEffect, useState } from "react";
 
 export default function Users() {
-  const [users, setUsers] = useState([]);
+    const url = "https://jsonplaceholder.typicode.com/users"
+    //Henter liste over Users
+    const [users, setUsers] = useState([]);
+    //Sætter user info
+    const [newName, setNewName] = useState("")
+    const [newEmail, setNewEmail] = useState("")
+    const [newWebsite, setNewWebsite] = useState("")
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch(url)
       .then((response) => response.json())
       .then((json) => setUsers(json));
   }, []);
+
+  const addUser = () =>{
+    const name = newName.trim()
+    const email = newEmail.trim()
+    const website = newWebsite.trim()
+
+    if (name && email && website) {
+        fetch(url, {
+            method:"POST",
+            body: JSON.stringify({
+                name,
+                email,
+                website,
+            }),
+            headers:{
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            setUsers([...users, data])
+            setNewName("")
+            setNewEmail("")
+            setNewWebsite("")
+            //pop-up af success besked
+        })
+    }
+  }
 
   return (
     <div>
@@ -41,6 +75,37 @@ export default function Users() {
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td>
+              <input
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                placeholder="Add name here..."
+              />
+            </td>
+            <td>
+              <input
+                placeholder="Add email here..."
+                value={newEmail}
+                onChange={e => setNewEmail(e.target.value)}
+              />
+            </td>
+            <td>
+              <input
+                placeholder="Add website here..."
+                value={newWebsite}
+                onChange={e => setNewWebsite(e.target.value)}
+              />
+            </td>
+            <td>
+              <button onClick={addUser}>
+                Add user
+              </button>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );
